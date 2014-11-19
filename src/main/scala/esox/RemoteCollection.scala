@@ -8,25 +8,19 @@ class RemoteCollection[A](protected val collection: Traversable[A]){
 
   def rem = this
 
-  def filter(f: A => Boolean) = Filtered(this, f)
+  def filter(f: A => Boolean): Filtered[A] = Filtered(this, f)
 
-  def slice(from: Int, to: Int) = Sliced(this, from, to)
+  def slice(from: Int, to: Int): Sliced[A] = Sliced(this, from, to)
 
-  def take(n: Int) = slice(0, n)
+  def take(n: Int): Sliced[A] = slice(0, n)
 
-  def drop(n: Int) = slice(n, -1)
+  def drop(n: Int): Sliced[A] = slice(n, -1)
 
-  def map[B](f: A => B) = Mapped(this, f)
+  def map[B](f: A => B): Mapped[A, B] = Mapped(this, f)
+
+
 
   /* TODO: implements this methods:
-
-  # Modification:
-  filter
-  slice
-  take
-  drop
-  map
-
   flatMap
   groupBy
   distinct

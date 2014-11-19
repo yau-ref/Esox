@@ -1,6 +1,6 @@
 package esox
 
-import esox.modops.Filtered
+import esox.modops.{Sliced, Filtered}
 
 import scala.collection.generic.CanBuildFrom
 
@@ -10,20 +10,27 @@ class RemoteCollection[T](protected val collection: Traversable[T]){
 
   def filter(f: T => Boolean) = Filtered(this, f)
 
+  def slice(from: Int, to: Int) = Sliced(this, from, to)
+
+  def take(n: Int) = slice(0, n)
+
+  def drop(n: Int) = slice(n, -1)
 
   /* TODO: implements this methods:
 
   # Modification:
   filter
-  groupBy
-  distinct
+  slice
   take
   drop
+
+  groupBy
+  distinct
   map
-  length
   flatMap
 
   # Extraction:
+  length
   reduce
   find
   exists
@@ -36,11 +43,8 @@ class RemoteCollection[T](protected val collection: Traversable[T]){
 
 package modops{
 
-  case class Filtered[T](rc: RemoteCollection[T], f: T => Boolean){
-  }
+  case class Filtered[T](rc: RemoteCollection[T], f: T => Boolean)
 
-}
-
-package extops{
+  case class Sliced[T](rc: RemoteCollection[T], from: Int, to: Int)
 
 }

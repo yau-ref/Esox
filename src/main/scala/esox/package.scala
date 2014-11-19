@@ -1,3 +1,3 @@
 package object esox {
-  implicit def traversable2RemTraversable[T](t: Traversable[T]) = new RemoteTraversable[T](t)
+  implicit def traversable2RemoteCollection[T](t: Traversable[T]) = new RemoteCollection[T](t)
 }

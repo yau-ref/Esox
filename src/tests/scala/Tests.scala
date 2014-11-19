@@ -8,7 +8,8 @@ class Tests extends FunSuite{
   val simpleList = List(1,2,3,2,1)
 
   test("Common test"){
-    simpleList.rem.filter(0 <)
+    simpleList.rem.filter(x => x > 0)
+
 
   }
 

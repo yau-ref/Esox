@@ -1,3 +1,9 @@
+import scala.collection.Traversable
+
 package object esox {
-  implicit def traversable2RemoteCollection[T](t: Traversable[T]) = new BaseRemoteCollection[T](t)
+
+  implicit class Remotable[A](t: Traversable[A]){
+    def rem: RemoteCollection[A] = new BaseRemoteCollection[A](t)
+  }
+
 }

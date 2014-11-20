@@ -1,10 +1,9 @@
 package esox
 
-import esox.modops.{Mapped, Sliced, Filtered}
+import esox.modops.{Filtered, Mapped, Sliced}
+import scala.collection.Traversable
 
-import scala.collection.generic.CanBuildFrom
-
-trait RemoteCollection[A]{
+class RemoteCollection[A]{
 
   def filter(f: A => Boolean): Filtered[A] = Filtered(this, f)
 
@@ -33,20 +32,20 @@ trait RemoteCollection[A]{
   */
 }
 
-class BaseRemoteCollection[A](protected val localCollection: Traversable[A]) extends RemoteCollection{
+class BaseRemoteCollection[A](protected val localCollection: Traversable[A]) extends RemoteCollection[A]{
   def rem = this
 }
 
 package modops{
 
   sealed trait ModifiedRemoteCollection[A] extends RemoteCollection[A]{
-    val inrRC: RemoteCollection
+    val inrRC: RemoteCollection[A]
   }
 
   case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A]
 
   case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A]
 
-  case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[B]
+  case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[A]
 
 }

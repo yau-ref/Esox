@@ -1,6 +1,7 @@
 package esox
 
 import esox.modops.{Filtered, Mapped, Sliced}
+import esox.termops.{GetLength, IsEmpty}
 import main.scala.esox.Performer
 
 import scala.collection.Traversable
@@ -18,6 +19,10 @@ abstract class RemoteCollection[A] {
   def drop(n: Int): Sliced[A] = slice(n, -1)
 
   def map[B](f: A => B): Mapped[A, B] = Mapped(this, f)
+
+  def length = performer.perform[A, Int](GetLength(this))
+
+  def isEmpty = performer.perform(IsEmpty(this))
 
   /* TODO: implements this methods:
   flatMap
@@ -65,18 +70,18 @@ sealed trait RCTerminalOperation[A] {
   val inrRC: RemoteCollection[A]
 }
 
-case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
+case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
 
-case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
 
-case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
 
-case class isEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
+case class IsEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
 
-case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation
+case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation[A]
 
-case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
 
-case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
+case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
 
 }

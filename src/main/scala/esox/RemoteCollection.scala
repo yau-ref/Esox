@@ -1,9 +1,13 @@
 package esox
 
 import esox.modops.{Filtered, Mapped, Sliced}
+import main.scala.esox.Performer
+
 import scala.collection.Traversable
 
-class RemoteCollection[A]{
+abstract class RemoteCollection[A] {
+
+  def performer: Performer
 
   def filter(f: A => Boolean): Filtered[A] = Filtered(this, f)
 
@@ -21,31 +25,58 @@ class RemoteCollection[A]{
   distinct
 
   # Extraction:
-  length
+  length num
   reduce
   find
-  exists
-  count
-  isEmpty
+  exists bool
+  count  num
+  isEmpty  bool
   foreach
   get - returns full collection
   */
 }
 
-class BaseRemoteCollection[A](protected val localCollection: Traversable[A]) extends RemoteCollection[A]{
-  def rem = this
+class BaseRemoteCollection[A](val localCollection: Traversable[A])
+                             (override implicit val performer: Performer) extends RemoteCollection[A] {
+
 }
 
-package modops{
+package modops {
 
-  sealed trait ModifiedRemoteCollection[A] extends RemoteCollection[A]{
-    val inrRC: RemoteCollection[A]
-  }
+sealed trait ModifiedRemoteCollection[A] extends RemoteCollection[A] {
 
-  case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A]
+  val inrRC: RemoteCollection[A]
 
-  case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A]
+  override val performer = inrRC.performer
 
-  case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[A]
+}
+
+case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A]
+
+case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A]
+
+case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[A]
+
+}
+
+package termops {
+
+sealed trait RCTerminalOperation[A] {
+  val inrRC: RemoteCollection[A]
+}
+
+case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
+
+case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+
+case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+
+case class isEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
+
+case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation
+
+case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation
+
+case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation
 
 }

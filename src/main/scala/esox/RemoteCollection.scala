@@ -1,7 +1,7 @@
 package esox
 
-import esox.modops.{Mapped, Sliced, Filtered}
-import esox.termops.{IsEmpty, GetLength}
+import esox.modops.{Filtered, Mapped, Sliced}
+import esox.termops.{GetLength, IsEmpty}
 
 import scala.collection.Traversable
 

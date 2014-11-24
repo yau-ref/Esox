@@ -8,6 +8,9 @@ import scala.collection.Traversable
 
 abstract class RemoteCollection[A] {
 
+  //TODO: make it package private
+  def data: Traversable[A]
+
   def performer: Performer
 
   def filter(f: A => Boolean): Filtered[A] = Filtered(this, f)
@@ -43,24 +46,38 @@ abstract class RemoteCollection[A] {
 
 class BaseRemoteCollection[A](val localCollection: Traversable[A])
                              (override implicit val performer: Performer) extends RemoteCollection[A] {
+  override def data: Traversable[A] = localCollection
 
 }
 
 package modops {
 
-sealed trait ModifiedRemoteCollection[A] extends RemoteCollection[A] {
+//TODO: rename inrRC
+trait ModifiedRemoteCollection[A] extends RemoteCollection[A] {
 
   val inrRC: RemoteCollection[A]
 
-  override val performer = inrRC.performer
+  override def performer = inrRC.performer
 
 }
 
-case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A]
+case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A] {
 
-case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A]
+  override def data: Traversable[A] = inrRC.data.filter(f)
 
-case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[A]
+}
+
+case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A] {
+
+  override def data: Traversable[A] = inrRC.data.slice(from, to)
+
+}
+
+case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[B] {
+
+  override def data: Traversable[B] = inrRC.data.map(f)
+
+}
 
 }
 

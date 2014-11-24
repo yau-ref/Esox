@@ -1,12 +1,12 @@
 package main.scala.esox
 
 import esox.RemoteCollection
-import esox.termops.RCTerminalOperation
+import esox.termops.TerminalOperation
 
 import scala.util.Try
 
 trait Performer {
 
-  def perform[A, B](op: RCTerminalOperation[A]): Try[B]
+  def perform[A, B](op: TerminalOperation[A]): Try[B]
 
 }

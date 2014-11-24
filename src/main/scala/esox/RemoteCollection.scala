@@ -46,74 +46,65 @@ abstract class RemoteCollection[A] {
 
 class BaseRemoteCollection[A](val localCollection: Traversable[A])
                              (override implicit val performer: Performer) extends RemoteCollection[A] {
+
   override def data: Traversable[A] = localCollection
 
 }
 
 package modops {
 
-//TODO: rename inrRC
 trait ModifiedRemoteCollection[A] extends RemoteCollection[A] {
-
-  val inrRC: RemoteCollection[A]
-
-  override def performer = inrRC.performer
-
+  val originalCollection: RemoteCollection[A]
+  override def performer = originalCollection.performer
 }
 
-case class Filtered[A](inrRC: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A] {
-
-  override def data: Traversable[A] = inrRC.data.filter(f)
-
+case class Filtered[A](originalCollection: RemoteCollection[A], f: A => Boolean) extends ModifiedRemoteCollection[A] {
+  override def data: Traversable[A] = originalCollection.data.filter(f)
 }
 
-case class Sliced[A](inrRC: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A] {
-
-  override def data: Traversable[A] = inrRC.data.slice(from, to)
-
+case class Sliced[A](originalCollection: RemoteCollection[A], from: Int, to: Int) extends ModifiedRemoteCollection[A] {
+  override def data: Traversable[A] = originalCollection.data.slice(from, to)
 }
 
-case class Mapped[A, B](inrRC: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[B] {
-
-  override def data: Traversable[B] = inrRC.data.map(f)
-
+case class Mapped[A, B](originalCollection: RemoteCollection[A], f: A => B) extends ModifiedRemoteCollection[B] {
+  override def data: Traversable[B] = originalCollection.data.map(f)
 }
 
 }
 
 package termops {
 
-sealed trait RCTerminalOperation[A] {
-  val inrRC: RemoteCollection[A]
+sealed trait TerminalOperation[A] {
+  val collection: RemoteCollection[A]
   def result: _
 }
 
-case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
-  def result = inrRC.data.size
+case class GetLength[A](collection: RemoteCollection[A]) extends TerminalOperation[A] {
+  def result = collection.data.size
 }
 
-case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
-  def result = inrRC.data.count(p)
+case class Count[A](collection: RemoteCollection[A], p: A => Boolean) extends TerminalOperation[A] {
+  def result = collection.data.count(p)
 }
 
-case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
-  def result = inrRC.data.exists(p)
+case class Exists[A](collection: RemoteCollection[A], p: A => Boolean) extends TerminalOperation[A] {
+  def result = collection.data.exists(p)
 }
 
-case class IsEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
-  def result = inrRC.data.isEmpty
+case class IsEmpty[A](collection: RemoteCollection[A]) extends TerminalOperation[A] {
+  def result = collection.data.isEmpty
 }
 
-case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation[A]{
-  def result = inrRC.data.reduce(f)
+case class Reduce[A, B >: A](collection: RemoteCollection[A], f: (A, B) => B) extends TerminalOperation[A] {
+  def result = collection.data.reduce(f)
 }
 
-case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
-  def result = inrRC.data.find(p)
+case class Find[A](collection: RemoteCollection[A], p: A => Boolean) extends TerminalOperation[A] {
+  def result = collection.data.find(p)
 }
 
-case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
-  def result = inrRC.data
+case class GetBack[A](collection: RemoteCollection[A]) extends TerminalOperation[A] {
+  def result = collection.data
 }
 
 }

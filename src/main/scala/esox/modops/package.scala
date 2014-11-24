@@ -5,7 +5,7 @@ import scala.collection.Traversable
 package object modops {
 
   trait ModifiedRemoteCollection[A] extends RemoteCollection[A] {
-    val originalCollection: RemoteCollection[A]
+    val originalCollection: RemoteCollection[_]
     override def performer = originalCollection.performer
   }
 

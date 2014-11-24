@@ -85,20 +85,35 @@ package termops {
 
 sealed trait RCTerminalOperation[A] {
   val inrRC: RemoteCollection[A]
+  def result: _
 }
 
-case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
+case class GetLength[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
+  def result = inrRC.data.size
+}
 
-case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
+case class Count[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
+  def result = inrRC.data.count(p)
+}
 
-case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
+case class Exists[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
+  def result = inrRC.data.exists(p)
+}
 
-case class IsEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
+case class IsEmpty[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
+  def result = inrRC.data.isEmpty
+}
 
-case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation[A]
+case class Reduce[A, B >: A](inrRC: RemoteCollection[A], f: (A, B) => B) extends RCTerminalOperation[A]{
+  def result = inrRC.data.reduce(f)
+}
 
-case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]
+case class Find[A](inrRC: RemoteCollection[A], p: A => Boolean) extends RCTerminalOperation[A]{
+  def result = inrRC.data.find(p)
+}
 
-case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]
+case class GetBack[A](inrRC: RemoteCollection[A]) extends RCTerminalOperation[A]{
+  def result = inrRC.data
+}
 
 }

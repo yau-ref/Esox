@@ -7,8 +7,7 @@ import scala.collection.Traversable
 
 abstract class RemoteCollection[A] {
 
-  //TODO: make it package private
-  def data: Traversable[A]
+  private[esox] def data: Traversable[A]
 
   def performer: Performer
 

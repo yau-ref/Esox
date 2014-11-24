@@ -23,8 +23,8 @@ package object termops {
     def result = collection.data.isEmpty
   }
 
-  case class Reduce[A, B >: A](collection: RemoteCollection[A], f: (A, B) => B) extends TerminalOperation[A, B] {
-    def result = collection.data.reduce(f)
+  case class Reduce[A, B >: A](collection: RemoteCollection[A], f: (B, A) => B) extends TerminalOperation[A, B] {
+    def result = collection.data.reduceLeft(f)
   }
 
   case class Find[A](collection: RemoteCollection[A], p: A => Boolean) extends TerminalOperation[A, Option[A]] {

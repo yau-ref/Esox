@@ -22,7 +22,6 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def map[B : ClassTag](f: A => B): Mapped[A, B] = Mapped(this, f)
 
-  // terminals
   def length = performer.perform[A, Int](GetLength(this))
 
   def isEmpty = performer.perform[A, Boolean](IsEmpty(this))
@@ -42,14 +41,13 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def toList = get.toList
 
+  def foreach(f: A => Unit): Unit = get.foreach(f)
+
+
   /* TODO: implements this methods:
   flatMap
   groupBy
   distinct
-
-  # Extraction:
-
-  foreach
   */
 }
 

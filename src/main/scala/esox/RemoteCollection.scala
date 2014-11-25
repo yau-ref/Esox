@@ -48,7 +48,6 @@ abstract class RemoteCollection[A: ClassTag] {
   /* TODO: implements this methods:
   flatMap
   groupBy
-  distinct
   */
 }
 

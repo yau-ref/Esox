@@ -25,4 +25,9 @@ package object modops {
     override def data: Traversable[B] = originalCollection.data.map(f)
   }
 
+  case class Deduplicated[A: ClassTag](originalCollection: RemoteCollection[A]) extends ModifiedRemoteCollection[A] {
+    //TODO: Use better way for this:
+    override def data: Traversable[A] = originalCollection.data.toSeq.distinct
+  }
+
 }

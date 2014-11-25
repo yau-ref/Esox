@@ -29,7 +29,12 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def exists(p: A => Boolean) = performer.perform[A, Boolean](Exists(this, p))
 
+  def find(p: A => Boolean) = performer.perform[A, Option[A]](Find(this, p))
+
   def count(p: A => Boolean) = performer.perform[A, Int](Count(this, p))
+
+  def reduce[B >: A : ClassTag](f: (B, A) => B) = performer.perform[A, B](Reduce(this, f))
+
 
   /* TODO: implements this methods:
   flatMap
@@ -37,8 +42,7 @@ abstract class RemoteCollection[A : ClassTag] {
   distinct
 
   # Extraction:
-  reduce
-  find
+
   foreach
   get - returns full collection
   */

@@ -6,8 +6,9 @@ import esox.termops._
 import scala.collection.Traversable
 import scala.reflect.ClassTag
 
-abstract class RemoteCollection[A : ClassTag] {
+abstract class RemoteCollection[A: ClassTag] {
 
+  // apply all modifications
   private[esox] def data: Traversable[A]
 
   def performer: Performer
@@ -20,26 +21,26 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def drop(n: Int): Sliced[A] = slice(n, -1)
 
-  def map[B : ClassTag](f: A => B): Mapped[A, B] = Mapped(this, f)
+  def map[B: ClassTag](f: A => B): Mapped[A, B] = Mapped(this, f)
 
-  def length = performer.perform[A, Int](GetLength(this))
+  def length: Int = performer.perform(GetLength(this))
 
-  def isEmpty = performer.perform[A, Boolean](IsEmpty(this))
+  def isEmpty: Boolean = performer.perform(IsEmpty(this))
 
-  def exists(p: A => Boolean) = performer.perform[A, Boolean](Exists(this, p))
+  def exists(p: A => Boolean): Boolean = performer.perform(Exists(this, p))
 
-  def find(p: A => Boolean) = performer.perform[A, Option[A]](Find(this, p))
+  def find(p: A => Boolean): Option[A] = performer.perform(Find(this, p))
 
-  def count(p: A => Boolean) = performer.perform[A, Int](Count(this, p))
+  def count(p: A => Boolean): Int = performer.perform(Count(this, p))
 
-  def reduce[B >: A : ClassTag](f: (B, A) => B) = performer.perform[A, B](Reduce(this, f))
+  def reduce[B >: A : ClassTag](f: (B, A) => B): B = performer.perform(Reduce(this, f))
 
   // returns full collection
-  def get = performer.perform[A, Traversable[A]](GetBack(this))
+  def get: Traversable[A] = performer.perform(GetBack(this))
 
-  def toArray = get.toArray
+  def toArray: Array[A] = get.toArray
 
-  def toList = get.toList
+  def toList: List[A] = get.toList
 
   def foreach(f: A => Unit): Unit = get.foreach(f)
 
@@ -51,8 +52,8 @@ abstract class RemoteCollection[A : ClassTag] {
   */
 }
 
-class BaseRemoteCollection[A : ClassTag](val localCollection: Traversable[A])
-                             (override implicit val performer: Performer) extends RemoteCollection[A] {
+class BaseRemoteCollection[A: ClassTag](val localCollection: Traversable[A])
+                                       (override implicit val performer: Performer) extends RemoteCollection[A] {
 
   override def data: Traversable[A] = localCollection
 

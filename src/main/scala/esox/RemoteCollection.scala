@@ -1,7 +1,7 @@
 package esox
 
 import esox.modops.{Filtered, Mapped, Sliced}
-import esox.termops.{GetLength, IsEmpty}
+import esox.termops._
 
 import scala.collection.Traversable
 import scala.reflect.ClassTag
@@ -22,9 +22,14 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def map[B : ClassTag](f: A => B): Mapped[A, B] = Mapped(this, f)
 
+  // terminals
   def length = performer.perform[A, Int](GetLength(this))
 
-  def isEmpty = performer.perform(IsEmpty(this))
+  def isEmpty = performer.perform[A, Boolean](IsEmpty(this))
+
+  def exists(p: A => Boolean) = performer.perform[A, Boolean](Exists(this, p))
+
+  def count(p: A => Boolean) = performer.perform[A, Int](Count(this, p))
 
   /* TODO: implements this methods:
   flatMap
@@ -32,12 +37,8 @@ abstract class RemoteCollection[A : ClassTag] {
   distinct
 
   # Extraction:
-  length num
   reduce
   find
-  exists bool
-  count  num
-  isEmpty  bool
   foreach
   get - returns full collection
   */

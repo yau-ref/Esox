@@ -35,6 +35,12 @@ abstract class RemoteCollection[A : ClassTag] {
 
   def reduce[B >: A : ClassTag](f: (B, A) => B) = performer.perform[A, B](Reduce(this, f))
 
+  // returns full collection
+  def get = performer.perform[A, Traversable[A]](GetBack(this))
+
+  def toArray = get.toArray
+
+  def toList = get.toList
 
   /* TODO: implements this methods:
   flatMap
@@ -44,7 +50,6 @@ abstract class RemoteCollection[A : ClassTag] {
   # Extraction:
 
   foreach
-  get - returns full collection
   */
 }
 

@@ -5,8 +5,11 @@ import scala.reflect.ClassTag
 package object termops {
 
   abstract class TerminalOperation[A: ClassTag, B: ClassTag] {
+
     val collection: RemoteCollection[A]
+
     def result: B
+
   }
 
   case class GetLength[A: ClassTag](collection: RemoteCollection[A]) extends TerminalOperation[A, Int] {

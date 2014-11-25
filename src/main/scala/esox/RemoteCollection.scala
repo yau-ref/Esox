@@ -4,8 +4,9 @@ import esox.modops.{Filtered, Mapped, Sliced}
 import esox.termops.{GetLength, IsEmpty}
 
 import scala.collection.Traversable
+import scala.reflect.ClassTag
 
-abstract class RemoteCollection[A] {
+abstract class RemoteCollection[A : ClassTag] {
 
   private[esox] def data: Traversable[A]
 
@@ -19,7 +20,7 @@ abstract class RemoteCollection[A] {
 
   def drop(n: Int): Sliced[A] = slice(n, -1)
 
-  def map[B](f: A => B): Mapped[A, B] = Mapped(this, f)
+  def map[B : ClassTag](f: A => B): Mapped[A, B] = Mapped(this, f)
 
   def length = performer.perform[A, Int](GetLength(this))
 
@@ -42,7 +43,7 @@ abstract class RemoteCollection[A] {
   */
 }
 
-class BaseRemoteCollection[A](val localCollection: Traversable[A])
+class BaseRemoteCollection[A : ClassTag](val localCollection: Traversable[A])
                              (override implicit val performer: Performer) extends RemoteCollection[A] {
 
   override def data: Traversable[A] = localCollection

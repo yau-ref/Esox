@@ -50,10 +50,3 @@ abstract class RemoteCollection[A: ClassTag] {
   groupBy
   */
 }
-
-class BaseRemoteCollection[A: ClassTag](val localCollection: Traversable[A])
-                                       (override implicit val performer: Performer) extends RemoteCollection[A] {
-
-  override def data: Traversable[A] = localCollection
-
-}

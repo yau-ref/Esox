@@ -4,7 +4,7 @@ import scala.reflect.ClassTag
 
 package object termops {
 
-  abstract class TerminalOperation[A: ClassTag, B: ClassTag] {
+  abstract class TerminalOperation[A: ClassTag, B: ClassTag] extends Serializable {
 
     val collection: RemoteCollection[A]
 

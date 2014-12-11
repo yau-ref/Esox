@@ -5,7 +5,7 @@ import scala.reflect.ClassTag
 
 package object modops {
 
-  abstract class ModifiedRemoteCollection[A: ClassTag] extends RemoteCollection[A] {
+  abstract class ModifiedRemoteCollection[A: ClassTag] extends RemoteCollection[A] with Serializable {
 
     val originalCollection: RemoteCollection[_]
 
